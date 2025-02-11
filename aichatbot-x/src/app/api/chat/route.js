@@ -8,7 +8,7 @@ export async function POST(request) {
     const { message } = await request.json();
     if (!message) {
       return NextResponse.json(
-        { message: "Message is required" },
+        { error: "Message content is required" },
         { status: 400 }
       );
     }
@@ -19,23 +19,23 @@ export async function POST(request) {
           role: "user",
           content: message,
         },
-        {
-          role: "bot",
-          content: "Hello, how can I help you?",
-        },
       ],
       model: "llama3-8b-8192",
     });
 
     const responseMessage =
-      chatCompletion.choices[0]?.content || "No response from the bot";
+      chatCompletion.choices[0]?.message?.content || "No response from the bot";
 
-    return NextResponse.json({ message: responseMessage });
+    return NextResponse.json({ response: responseMessage });
   } catch (error) {
-    console.error("error in chatbot", error);
+    console.error("Error in chatbot", error);
     return NextResponse.json(
       { error: "An error occurred while processing your request" },
       { status: 500 }
     );
   }
 }
+// {
+//   role: "bot",
+//   content: "Hello, how can I help you?",
+// },
